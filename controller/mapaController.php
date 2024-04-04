@@ -11,12 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             case "retornarMapa":
                 retornarMapa();
                 break;
-            case "retornarTorres":
-                retornarTorres();
-                break;
-            case "retornarEmpreendimentos":
-                retornarEmpreendimentos();
-                break;
             case "retornarTotalizador":
                 retornarTotalizador();
                 break;
@@ -99,56 +93,5 @@ function retornarMapa()
             );
         }
     }
-    echo json_encode($itens);
-}
-
-function retornarEmpreendimentos()
-{
-    $conn = new SQLServer();
-    $conn->CRM();
-    $conn->conectar();
-    $conn->conectarBanco();
-
-    $conn->executarQuery(SQLEmpreend());
-
-    $itens = array();
-    while ($rows = $conn->fetchArray()) {
-        $itens[] = array(
-            "codEmpree" => $rows['COD'],
-            "nome" => $rows['NOME']
-        );
-    }
-
-    echo json_encode($itens);
-}
-
-function retornarTorres()
-{
-    $EMPREE = $_GET['codEmpree'];
-
-    $conn = new SQLServer();
-    $conn->CRM();
-    $conn->conectar();
-    $conn->conectarBanco();
-
-    $conn->executarQuery(SQLEmpreendUNID($EMPREE));
-
-    $itens = array();
-    while ($rows = $conn->fetchArray()) {
-        $itens[] = array(
-            "numUnid2" => $rows['NUM_UNID2'],
-            "numUnid" => $rows['NUM_UNID']
-        );
-    }
-
-    // Função de comparação para ordenar por 'numUnid2'
-    function compare($a, $b)
-    {
-        return strcmp($a['numUnid2'], $b['numUnid2']);
-    }
-
-    // Ordena o array utilizando a função de comparação
-    usort($itens, 'compare');
-
     echo json_encode($itens);
 }
