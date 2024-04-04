@@ -90,7 +90,7 @@ function carregarMapa() {
                     andares[andar].forEach(function(unidade) {
 
                         var unidadeSplit = unidade.split('-');
-                        console.log(unidadeSplit[2]);
+
                         var td = $('<td>', {
                             text: unidadeSplit[1],
                             class: unidadeSplit[2].toLowerCase(),
