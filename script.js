@@ -1,8 +1,4 @@
 $(document).ready(function() {
-
-    carregarSelectTorre();
-    carregarSelectEmpreendimentos();
-
     $('#loading').hide();
 });
 
