@@ -1,123 +1,264 @@
 <?php
 
-//Retorna apenas os ids
-function getAll()
+function SQLEmpreendSubUnidTOT($EMPREE, $NUM_UNID)
 {
-    $query = "
-        SELECT 
-           *
-        FROM  ZMDIOTSUBUNIDADE        
-        ;";
+    return  "SELECT 
+                ISNULL(VENDIDO.TOT, 0) AS VENDIDO,
+                ISNULL(ALUGADO.TOT, 0) AS ALUGADO,
+                ISNULL(RESERVADO.TOT, 0) AS RESERVADO,
+                ISNULL(COMERCIAL.TOT, 0) AS COMERCIAL,
+                ISNULL(DISPONIVEL.TOT, 0) AS DISPONIVEL,
+                ISNULL(PERMUTA.TOT, 0) AS PERMUTA
+            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XSU
+            LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL(NOLOCK) 
+                ON (XALGIMOVEL.CODIMOVEL = XSU.CODIMOVEL
+                    AND XALGIMOVEL.CODCOLIMOVEL = XSU.CODCOLIMOVEL)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            WHERE XU.COD_SIT_SUB_UNID IN ('900') 
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) VENDIDO
+                ON (VENDIDO.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND VENDIDO.NUM_UNID = XSU.NUM_UNID)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL(NOLOCK) 
+                                ON (XALGIMOVEL.CODIMOVEL = XU.CODIMOVEL
+                                    AND XALGIMOVEL.CODCOLIMOVEL = XU.CODCOLIMOVEL)
+                            WHERE (XU.COD_SIT_SUB_UNID IN ('151', '901') OR XU.STATUSALUGUEL IN ('151', '901')  
+                                OR ISNULL(XALGIMOVEL.SITUACAOIMOVEL, 1) IN ('2'))
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) ALUGADO
+                ON (ALUGADO.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND ALUGADO.NUM_UNID = XSU.NUM_UNID)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL(NOLOCK) 
+                                ON (XALGIMOVEL.CODIMOVEL = XU.CODIMOVEL
+                                    AND XALGIMOVEL.CODCOLIMOVEL = XU.CODCOLIMOVEL)
+                            WHERE (XU.COD_SIT_SUB_UNID IN ('200', '201') OR XU.STATUSALUGUEL IN ('200', '201') 
+                                OR ISNULL(XALGIMOVEL.SITUACAOIMOVEL, 1) IN ('5'))
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) RESERVADO
+                ON (RESERVADO.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND RESERVADO.NUM_UNID = XSU.NUM_UNID)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            WHERE XU.COD_SIT_SUB_UNID IN ('902')
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) PERMUTA
+                ON (PERMUTA.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND PERMUTA.NUM_UNID = XSU.NUM_UNID)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL(NOLOCK) 
+                                ON (XALGIMOVEL.CODIMOVEL = XU.CODIMOVEL
+                                    AND XALGIMOVEL.CODCOLIMOVEL = XU.CODCOLIMOVEL)
+                            WHERE (XU.COD_SIT_SUB_UNID IN ('903')  
+                                AND XU.STATUSALUGUEL NOT IN ('151', '901') 
+                                AND ISNULL(XALGIMOVEL.SITUACAOIMOVEL, 1) NOT IN ('2'))
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) COMERCIAL
+                ON (COMERCIAL.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND COMERCIAL.NUM_UNID = XSU.NUM_UNID)
+            LEFT OUTER JOIN (SELECT COUNT(XU.NUM_SUB_UNID) AS TOT, XU.COD_PESS_EMPR, XU.NUM_UNID
+                            FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XU
+                            LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL(NOLOCK) 
+                                ON (XALGIMOVEL.CODIMOVEL = XU.CODIMOVEL
+                                    AND XALGIMOVEL.CODCOLIMOVEL = XU.CODCOLIMOVEL)
+                            WHERE ISNUMERIC(XU.NUM_SUB_UNID) = 1 
+                                AND XU.COD_SIT_SUB_UNID IN ('100') 
+                                AND ISNULL(XU.STATUSALUGUEL, '101') NOT IN ('151', '901') 
+                                AND ISNULL(XALGIMOVEL.SITUACAOIMOVEL, 1) NOT IN ('2', '5')
+                                AND XU.COD_PESS_EMPR = '" . $EMPREE . "'
+                                AND REPLACE(XU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+                            GROUP BY XU.COD_PESS_EMPR, XU.NUM_UNID) DISPONIVEL
+                ON (DISPONIVEL.COD_PESS_EMPR = XSU.COD_PESS_EMPR
+                    AND DISPONIVEL.NUM_UNID = XSU.NUM_UNID)
+            WHERE ISNUMERIC(XSU.NUM_SUB_UNID) = 1
+                AND XSU.NUM_SUB_UNID > '0' AND XSU.NUM_SUB_UNID < '99999'
+                AND XSU.COD_PESS_EMPR = '" . $EMPREE . "'
+                AND REPLACE(XSU.NUM_UNID, ' ', '') = '" . $NUM_UNID . "'
+            GROUP BY XSU.COD_PESS_EMPR, XSU.NUM_UNID, VENDIDO.TOT, ALUGADO.TOT, RESERVADO.TOT, COMERCIAL.TOT, DISPONIVEL.TOT, PERMUTA.TOT;";
+}
+
+function SQLEmpreendUNIDTORRE($EMPREE, $TORRE)
+{
+    return  "SELECT XU.NUM_UNID 
+			FROM [srvbd].CorporeRM.dbo.XUNIDADE XU (NOLOCK) 
+			WHERE XU.COD_PESS_EMPR ='" . $EMPREE . "'
+			AND replace(XU.NUM_UNID,' ','') like '%" . $TORRE . "%'
+			AND XU.NUM_UNID <> '%COND%'
+			AND XU.NUM_UNID not in('%COND%','CONDOM')
+			ORDER BY XU.NUM_UNID DESC;";
+}
+
+function SQLEmpreendSubAndar($EMPREE, $NUM_UNID)
+{
+    return  "SELECT XSU.NUM_SUB_UNID/100 as ANDAR 
+			FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XSU
+			WHERE 
+				XSU.NUM_SUB_UNID > '0' and XSU.NUM_SUB_UNID < '99999'
+				AND  XSU.COD_PESS_EMPR = '" . $EMPREE . "'
+				and XSU.NUM_UNID = '" . $NUM_UNID . "'
+				AND ISNUMERIC(XSU.NUM_SUB_UNID) = 1
+				group by XSU.NUM_SUB_UNID/100
+			ORDER BY XSU.NUM_SUB_UNID/100 DESC;";
+}
+
+function SQLEmpreendSubUnid($EMPREE, $NUM_UNID, $ANDAR)
+{
+    $query = " 
+	SELECT 
+		XSU.NUM_SUB_UNID,
+		CASE 
+			WHEN XSU.COD_SIT_SUB_UNID IN ('900') THEN 'VENDIDO'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('200', '201') THEN 'RESERVADO'
+			WHEN XSU.STATUSALUGUEL IN ('200', '201') OR XALGIMOVEL.SITUACAOIMOVEL IN ('5') THEN 'RESERVADO'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('151', '901') THEN 'ALUGADO'
+			WHEN XSU.STATUSALUGUEL IN ('151', '901') OR XALGIMOVEL.SITUACAOIMOVEL IN ('2') THEN 'ALUGADO'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('902') THEN 'PERMUTA'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('903') THEN 'RESERVACOMERCIAL'
+			ELSE 'DISPONIVEL' 
+		END AS 'COR',
+		CASE 
+			WHEN XSU.COD_SIT_SUB_UNID IN ('900') THEN 'WHITE'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('200', '201') THEN 'BLACK'
+			WHEN XSU.STATUSALUGUEL IN ('200', '201') OR XALGIMOVEL.SITUACAOIMOVEL IN ('5') THEN 'BLACK'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('151', '901') THEN 'WHITE'
+			WHEN XSU.STATUSALUGUEL IN ('151', '901') OR XALGIMOVEL.SITUACAOIMOVEL IN ('2') THEN 'WHITE'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('902') THEN 'BLACK'
+			WHEN XSU.COD_SIT_SUB_UNID IN ('903') THEN 'WHITE'
+			ELSE 'BLACK' 
+		END AS 'CORFONTE',
+		AUX.VENDA,
+		AUX.DATAVENDA,
+		AUX.STATUSVENDA,
+		AUX.CLIENTE
+	FROM [srvbd].CorporeRM.dbo.XSUBUNIDADE XSU
+	LEFT OUTER JOIN (
+		SELECT 
+			CAST(XV.NUM_VENDA AS VARCHAR(10)) AS 'VENDA',
+			CONVERT(VARCHAR, xv.DAT_VENDA, 103) AS DATAVENDA,
+			CASE
+				WHEN XV.COD_SIT_VENDA = '10' THEN 'EM PREPARAÇÃO'
+				WHEN XV.COD_SIT_VENDA = '40' THEN 'EFETIVADO'
+				WHEN XV.COD_SIT_VENDA = '50' THEN 'QUITADO'
+			END AS 'STATUSVENDA',
+			FC.NOMEFANTASIA AS 'CLIENTE',
+			XI.NUM_SUB_UNID,
+			XI.NUM_UNID,
+			XI.COD_PESS_EMPR
+		FROM [srvbd].CorporeRM.dbo.XVENDA XV (nolock)
+		INNER JOIN [srvbd].CorporeRM.dbo.XITEMVENDA XI (nolock) ON (XI.NUM_VENDA = XV.NUM_VENDA)
+		INNER JOIN [srvbd].CorporeRM.dbo.xcomprador xc (nolock) ON (xv.num_venda = xc.num_venda AND xv.codcoligada = xc.codcoligada)
+		INNER JOIN [srvbd].CorporeRM.dbo.fcfo FC (nolock) ON (XC.codcolcfo = FC.codcoligada AND XC.codcfo = FC.codcfo)
+		WHERE XV.COD_SIT_VENDA IN ('10', '40', '50') AND XC.PRINCIPAL = 1
+		
+		--MODULO DE ALUGUEL
+		--TEM CONTRATO DE VENDA E ALUGUEL ATIVOS PARA MESMA UNIDADE
+		--TEM QUE VALIDAR ISSO NO FINANCEIRO
+		/*UNION ALL
+		SELECT 
+			CAST(XC.CODCOLCONTLOC AS VARCHAR(2))+'-'+CAST(XC.CODCONTLOC AS VARCHAR(6)) AS 'VENDA',
+			CONVERT(VARCHAR, XC.DTCONTRATOLOC, 103) AS DATAVENDA,
+			CASE
+				WHEN XC.SITUACAOCONTLOC = '0' THEN 'EM PREPARAÇÃO'
+				WHEN XC.SITUACAOCONTLOC = '1' THEN 'EFETIVADO'
+				WHEN XC.SITUACAOCONTLOC = '2' THEN 'DISTRATADO'
+			END AS 'STATUSVENDA',
+			FC.NOMEFANTASIA AS 'CLIENTE',
+			XSU.NUM_SUB_UNID,
+			XSU.NUM_UNID,
+			XSU.COD_PESS_EMPR
+		FROM [srvbd].CORPORERM.DBO.XSUBUNIDADE XSU
+			INNER JOIN [srvbd].CORPORERM.DBO.XEMPREENDIMENTO XE(NOLOCK)
+				ON( XE.COD_PESS_EMPR = XSU.COD_PESS_EMPR )
+
+			INNER JOIN [SRVBD].CORPORERM.DBO.XALGIMOVEL XII(NOLOCK)
+			ON( XII.CODCOLIMOVEL = XSU.CODCOLIMOVEL 
+				AND XII.CODIMOVEL = XSU.CODIMOVEL )
+
+			INNER JOIN [SRVBD].CORPORERM.DBO.XALGCONTRATOLOCIMOVEL XI(NOLOCK) 
+			ON (XII.CODCOLIMOVEL = XI.CODCOLIMOVEL 
+				AND XII.CODIMOVEL = XI.CODIMOVEL )	
+
+			INNER join [SRVBD].CorporeRM.dbo.XALGCONTRATOLOC XC(nolock) 
+					ON(XI.CODCOLCONTLOC = XC.CODCOLCONTLOC 
+					AND XI.CODCONTLOC = XC.CODCONTLOC) 
+
+			INNER join [SRVBD].CorporeRM.dbo.XALGCONTRATOLOCLOCATARIO XA(nolock) 
+					ON(XA.CODCOLCONTLOC = XC.CODCOLCONTLOC 
+					AND XA.CODCONTLOC = XC.CODCONTLOC) 
+
+			INNER JOIN [SRVBD].CORPORERM.DBO.FCFO FC ON( FC.CODCFO = XA.CODCFOLOCATARIO )
+		WHERE XA.principallocatario = 1
+		AND XC.SITUACAOCONTLOC IN(0,1)*/
+		
+
+		UNION ALL
+		SELECT 
+			'' AS 'VENDA',
+			'' AS DATAVENDA,
+			'RESERVA COMERCIAL' AS 'STATUSVENDA',
+			XSU.RESERVA AS 'CLIENTE',
+			XSU.NUM_SUB_UNID,
+			XSU.NUM_UNID,
+			XSU.COD_PESS_EMPR
+		FROM [srvbd].CorporeRM.dbo.XSUBUNIDADECOMPL XSU (nolock)
+		INNER JOIN [srvbd].CorporeRM.dbo.XSUBUNIDADE XSUB ON (XSUB.NUM_SUB_UNID = XSU.NUM_SUB_UNID AND XSUB.NUM_UNID = XSU.NUM_UNID AND XSUB.COD_PESS_EMPR = XSU.COD_PESS_EMPR)
+		WHERE XSU.RESERVA IS NOT NULL AND XSUB.COD_SIT_SUB_UNID NOT IN ('100', '200', '900') AND ISNULL(XSUB.STATUSALUGUEL, '99999') NOT IN ('201', '901', '903')
+	) AUX ON (AUX.NUM_SUB_UNID = XSU.NUM_SUB_UNID AND AUX.NUM_UNID = XSU.NUM_UNID AND AUX.COD_PESS_EMPR = XSU.COD_PESS_EMPR)
+	LEFT OUTER JOIN [srvbd].CorporeRM.dbo.XALGIMOVEL XALGIMOVEL (NOLOCK) ON (XALGIMOVEL.CODIMOVEL = XSU.CODIMOVEL AND XALGIMOVEL.CODCOLIMOVEL = XSU.CODCOLIMOVEL)
+	WHERE 
+		isnumeric(XSU.NUM_SUB_UNID) = 1 AND 
+		XSU.NUM_SUB_UNID > '0' AND XSU.NUM_SUB_UNID < '99999' AND 
+		XSU.COD_PESS_EMPR = '" . $EMPREE . "' AND 
+		XSU.NUM_UNID = '" . $NUM_UNID . "' AND 
+		XSU.NUM_SUB_UNID / 100 = '" . $ANDAR . "'";
+
     return $query;
 }
 
-//Retorna todos os dados
-function getInstalacoes()
+function SQLEmpreend()
 {
-    $query = "
-    SELECT
-        IOT.ID AS 'CODIOTSUBUNIDADE',
-        XE.NOMEFANTASIA,
-        XE.COD_PESS_EMPR,
-        XSU.NUM_UNID,
-        XSU.NUM_SUB_UNID,
-        IOT.IDCOMPONENTE,
-        IOT.ATIVO,
-		IOT.DESCRICAO,
-		TIPO.TIPO,
-        ICOMP.TIMERBOTAO,
-        ICOMP.TEMPORIZADOR,
-        ICOMP.TIMER
 
-    FROM XEMPREENDIMENTO XE
-
-    LEFT OUTER JOIN XEMPREENDIMENTOCOMPL  XC ON( XE.COD_PESS_EMPR = XC.CODPESSEMPR)
-    INNER JOIN XSUBUNIDADE XSU ON (XE.COD_PESS_EMPR = XSU.COD_PESS_EMPR)
-    INNER JOIN ZMDIOTSUBUNIDADE IOT ON(XSU.COD_PESS_EMPR = IOT.COD_PESS_EMPR AND 
-                                            XSU.NUM_UNID = IOT.NUM_UNID AND 
-                                            XSU.NUM_SUB_UNID = IOT.NUM_SUB_UNID)
-	INNER JOIN [SRVBD].IOT.dbo.ICOMPONENTE ICOMP ON (ICOMP.CODCOMPONENTE = IOT.IDCOMPONENTE)
-	INNER JOIN [SRVBD].IOT.dbo.ITIPO TIPO ON (TIPO.CODTIPO = ICOMP.CODTIPO)
-    
-    WHERE XC.IOT IN('T')
-    ORDER BY XSU.NUM_SUB_UNID
-    ;";
-    return $query;
+    return "select distinct xe.COD_PESS_EMPR as COD,
+	UPPER(ltrim(replace(replace(xe.NOME, 'ED.', ''), 'EDIFICIO', ''))) as NOME 
+	from [srvbd].CorporeRM.dbo.XEMPREENDIMENTO XE (nolock)
+		left outer join [srvbd].CorporeRM.dbo.XVENDA XV (nolock)
+			ON (xe.COD_PESS_EMPR = xv.COD_PESS_EMPR
+				and xe.CODCOLIGADA = xv.CODCOLIGADA)
+		left outer join [srvbd].CorporeRM.dbo.XCOMPRADOR XC (nolock)
+			ON(XV.NUM_VENDA = XC.NUM_VENDA
+				and XC.PRINCIPAL = 1)
+		left outer join [srvbd].CorporeRM.dbo.FCFO FC (nolock)
+			ON(XC.CODCFO = fc.CODCFO)
+		left outer join [srvbd].CorporeRM.dbo.XEMPREENDIMENTOCOMPL XL
+			ON(XL.CODPESSEMPR = XE.COD_PESS_EMPR)
+	/*where xe.COD_PESS_EMPR in ('3', '5', '7', '8', '9', '11','22','14', '17', '30', '31','56','85','86','74','94','100','68','102','109')*/
+	where ISNULL(XL.SALESPLAN,'W')  in ('T')
+	
+	UNION ALL
+	SELECT '9999' AS COD,
+	'TELEMARKETING' AS NOME
+	UNION ALL
+	SELECT '9998' AS COD,
+	'AVULSOS' AS NOME
+	order by 2;";
 }
 
-function getSubUnidades()
+
+function SQLEmpreendUNID($EMPREE)
 {
-    $query = "
-        SELECT DISTINCT       
-            XE.NOMEFANTASIA,
-            XE.COD_PESS_EMPR,
-            XSU.NUM_UNID,
-
-            XSU.NUM_SUB_UNID
-        FROM XEMPREENDIMENTO XE
-        LEFT OUTER JOIN XEMPREENDIMENTOCOMPL XC ON( XE.COD_PESS_EMPR = XC.CODPESSEMPR)
-        INNER JOIN XSUBUNIDADE XSU ON (XE.COD_PESS_EMPR = XSU.COD_PESS_EMPR)
-        WHERE XC.IOT IN('T')
-        ORDER BY NUM_SUB_UNID
-    ;";
-    return $query;
-}
-
-function getCodInstalacao($dados)
-{
-    $query = "
-        SELECT 
-            ID,
-            ATIVO
-        FROM  ZMDIOTSUBUNIDADE
-        WHERE COD_PESS_EMPR = '" . $dados['codEmpreendimento'] . "' AND 
-            NUM_UNID = '" . $dados['numUnidade'] . "' AND
-            NUM_SUB_UNID = '" . $dados['numSubUnidade'] . "' AND
-            IDCOMPONENTE = '" . $dados['codComponente'] . "'
-        ;";
-    return $query;
-}
-
-function excluir($codInstalacao)
-{
-    $query = "
-        DELETE FROM [ZMDIOTSUBUNIDADE]  
-        WHERE ID = " . $codInstalacao . "
-    ;";
-
-    return $query;
-}
-
-function insert($dados)
-{
-    $query = "
-        INSERT INTO [dbo].[ZMDIOTSUBUNIDADE]
-        ([IDCOMPONENTE]
-        ,[DESCRICAO]
-        ,[ATIVO]
-        ,[COD_PESS_EMPR]
-        ,[NUM_UNID]
-        ,[NUM_SUB_UNID]
-        ,[CODIMOVEL]
-        ,[CODCOLIMOVEL]
-        ,[RECCREATEDBY]
-        ,[RECCREATEDON]
-        ,[RECMODIFIEDBY]
-        ,[RECMODIFIEDON])
-    VALUES
-        ('" . $dados['codComponente'] . "',
-        '" . $dados['apelido'] . "',
-        '1',
-        '" . $dados['codEmpreendimento'] . "',
-        '" . $dados['numUnidade'] . "',
-        '" . $dados['numSubUnidade'] . "',
-        null,
-        null,
-        'equipe_ti',
-        '" . date("Y-m-d H:i:s") . "',
-        'equipe_ti',
-        '" . date("Y-m-d H:i:s") . "')
-    ;";
-
-    return $query;
+    return  "SELECT CONVERT(varchar(10), XU.NUM_UNID) as NUM_UNID2,
+			replace(XU.NUM_UNID,' ','') as NUM_UNID
+			FROM [srvbd].CorporeRM.dbo.XUNIDADE XU (NOLOCK) 
+			WHERE XU.COD_PESS_EMPR ='" . $EMPREE . "'
+			ORDER BY XU.NUM_UNID DESC;";
 }

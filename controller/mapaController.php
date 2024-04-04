@@ -1,10 +1,9 @@
 <?php
 
 header('Content-Type: text/html; charset=UTF-8');
-include("../../funcaosql/sqlXclient.php");
-include("../../conn.php");
-include("../../funcaosql/sqlLog.php");
-include("../../emailenvio.php");
+include("./config/conn.php");
+include("./model/mapaModel.php");
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['action'])) {
