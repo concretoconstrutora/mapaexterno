@@ -1,156 +1,155 @@
 <?php
 
-// header("Cache-Control: no-cache, no-store, must-revalidate");
-header("Access-Control-Allow-Origin: *");
-// header("Content-Type: application/json; charset=utf-8");
-
-include("./config/conn.php");
-include("./model/instalacaoModel.php");
-include("./model/logModel.php");
-
+header('Content-Type: text/html; charset=UTF-8');
+include("../../funcaosql/sqlXclient.php");
+include("../../conn.php");
+include("../../funcaosql/sqlLog.php");
+include("../../emailenvio.php");
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (isset($_GET['action'])) {
         switch ($_GET['action']) {
-            case "retornarSubUnidadesCadastradas":
-                retornarSubUnidadesCadastradas();
+            case "retornarMapa":
+                retornarMapa();
                 break;
-            case "retornarInstalacoesIDs":
-                retornarInstalacoesIDs();
+            case "retornarTorres":
+                retornarTorres();
                 break;
-            case "retornarInstalacoes":
-                retornarInstalacoes();
+            case "retornarEmpreendimentos":
+                retornarEmpreendimentos();
                 break;
-            default:
-                break;
-        }
-    }
-} elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['action'])) {
-        switch ($_POST['action']) {
-            case "registrarCheck": 
-                registrarCheck();
-                break;
-            default:
+            case "retornarTotalizador":
+                retornarTotalizador();
                 break;
         }
     }
 }
-
-function conectar()
+function retornarTotalizador()
 {
+
     $conn = new SQLServer();
     $conn->CorporeRM();
     $conn->conectar();
+    $conn->conectarBanco();
 
-    return $conn;
-}
+    $empree = $_GET['codEmpre'];
+    $torre = $_GET['torre'];
 
-//Retorna todos os dados completos
-function retornarInstalacoes()
-{
-    $conn = conectar();
-    $conn->executarQuery(getInstalacoes());
+    $sql = SQLEmpreendSubUnidTOT($empree, $torre);
+
+    $conn->executarQuery($sql);
+
     $itens = array();
     while ($rows = $conn->fetchArray()) {
-        $itens[] = array(
-            "id" => $rows['CODIOTSUBUNIDADE'],
-            "nomeFantasia" => $rows['NOMEFANTASIA'],
-            "codEmpreendimento" => $rows['COD_PESS_EMPR'],
-            "numUnidade" => $rows['NUM_UNID'],
-            "numSubUnidade" => $rows['NUM_SUB_UNID'],
-            "codComponente" => $rows['IDCOMPONENTE'],
-            "ativo" => $rows['ATIVO'],
-            "descricao" => $rows['DESCRICAO'],
-            "tipo" => $rows['TIPO'], 
-            "timerBotao" => $rows['TIMERBOTAO'], 
-            "temporizador" => $rows['TEMPORIZADOR'] ,
-            "timer" => $rows['TIMER']      
+
+        $item = array(
+            "vendido" => $rows['VENDIDO'],
+            "alugado" => $rows['ALUGADO'],
+            "reservado" => $rows['RESERVADO'],
+            "comercial" => $rows['COMERCIAL'],
+            "disponível" => $rows['DISPONIVEL'],
+            "permuta" => $rows['PERMUTA']
         );
+
+        // Adicionar o item ao array de itens
+        array_push($itens, $item);
     }
 
     echo json_encode($itens);
 }
 
-function retornarSubUnidadesCadastradas()
-{   
-    $conn = conectar();
-    $conn->executarQuery(getSubUnidades());
-    $itens = array();
-    while ($rows = $conn->fetchArray()) {
-        $itens[] = array(
-            "nomeFantasia" => $rows['NOMEFANTASIA'],
-            "codEmpreendimento" => $rows['COD_PESS_EMPR'],
-            "numUnidade" => $rows['NUM_UNID'],
-            "numSubUnidade" => $rows['NUM_SUB_UNID']
-        );
-    }
-
-    echo json_encode($itens);
-}
-
-//Retorna apenas ids
-function retornarInstalacoesIDs()
+function retornarMapa()
 {
-    $conn = conectar();
-    $conn->executarQuery(getAll());
+
+    $conn = new SQLServer();
+    $conn->CorporeRM();
+    $conn->conectar();
+    $conn->conectarBanco();
+
+    $empree = $_GET['codEmpre'];
+    $torre = $_GET['torre'];
+
+    // 1- Buscar num_unid
+    $sql = SQLEmpreendUNIDTORRE($empree, $torre);
+    $conn->executarQuery($sql);
+    while ($rows = $conn->fetchArray()) {
+        $numUnid = $rows['NUM_UNID'];
+    }
+
+    // 2- Buscar andares
+    $sql = SQLEmpreendSubAndar($empree, $numUnid);
+    $conn->executarQuery($sql);
+
     $itens = array();
-    while ($rows = $conn->fetchArray()) {
-        $itens[] = array(
-            "id" => $rows['ID'],
-            "codComponente" => $rows['IDCOMPONENTE'],
-            "descricao" => $rows['DESCRICAO'],
-            "ativo" => $rows['ATIVO'],
-            "codEmpreendimento" => $rows['COD_PESS_EMPR'],
-            "numUnidade" => $rows['NUM_UNID'],
-            "numSubUnidade" => $rows['NUM_SUB_UNID']
-        );
-    }
+    while ($rowsAndar = $conn->fetchArray()) {
+        $andar = $rowsAndar['ANDAR'];
 
-    echo json_encode($itens);
-}
+        // 3- Buscar unidades por andar 
+        $sql2 = SQLEmpreendSubUnid($empree, $numUnid, $andar);
+        $conn->executarQuery2($sql2);
 
-function registrarCheck() //TODO_MIX: trocar o nome
-{
-    $conn = conectar();
-    $dados = $_POST['dadosInstalacao'];
-
-    //Verificar se já existe essa instalação
-    $conn->executarQuery(getCodInstalacao($dados));
-
-    $codInstalacao = null;
-    while ($rows = $conn->fetchArray()) {
-        $codInstalacao = $rows['ID'];
-    }
-
-    if ($codInstalacao == null) {
-        //INSERIR
-        $exec = $conn->executarQueryIUD(insert($dados));
-
-        if ($exec) {
-            $response['mensagem'] = "Sucesso! A instalação foi inserida corretamente!";
-            $response['status'] = 'success';
-        } else {
-            $response['mensagem'] = "Erro! A instalação não foi inserida!";
-            $response['status'] = 'erro';
+        while ($rowsUnidade = $conn->fetchArray2()) {          
+            $itens[] = array(
+                "andarUnidade" =>  $andar . '-' .
+                                   $rowsUnidade['NUM_SUB_UNID'] . '-' . 
+                                   $rowsUnidade['COR'] . '-' . 
+                                   $rowsUnidade['VENDA'] . '-' .
+                                   $rowsUnidade['DATAVENDA'] . '-' .
+                                   $rowsUnidade['STATUSVENDA'] . '-' .
+                                   $rowsUnidade['CLIENTE']
+            );
         }
-
-        //LOG
-        $mensagemLOG = "INSTALAÇÃO REGISTRADA: " . "SUBUNIDADE: " . $dados['numSubUnidade'] . " - COMPONENTE: " .  $dados['codComponente'];
-    } else {
-        //EXCLUIR            
-        $exec = $conn->executarQueryIUD(excluir($codInstalacao));
-
-        if ($exec) {
-            $response['mensagem'] = "Sucesso! A instalação foi excluída corretamente!";
-            $response['status'] = 'success';
-        } else {
-            $response['mensagem'] = "Erro! A instalação não foi excluída!";
-            $response['status'] = 'erro';
-        }
-
-        //LOG
-        $mensagemLOG = "INSTALAÇÃO REMOVIDA: " . "SUBUNIDADE: " . $dados['numSubUnidade'] . " - COMPONENTE: " .  $dados['codComponente'];
     }
-    echo (json_encode($response));
+    echo json_encode($itens);
+}
+
+function retornarEmpreendimentos()
+{
+    $conn = new SQLServer();
+    $conn->CRM();
+    $conn->conectar();
+    $conn->conectarBanco();
+
+    $conn->executarQuery(SQLEmpreend());
+
+    $itens = array();
+    while ($rows = $conn->fetchArray()) {
+        $itens[] = array(
+            "codEmpree" => $rows['COD'],
+            "nome" => $rows['NOME']
+        );
+    }
+
+    echo json_encode($itens);
+}
+
+function retornarTorres()
+{
+    $EMPREE = $_GET['codEmpree'];
+
+    $conn = new SQLServer();
+    $conn->CRM();
+    $conn->conectar();
+    $conn->conectarBanco();
+
+    $conn->executarQuery(SQLEmpreendUNID($EMPREE));
+
+    $itens = array();
+    while ($rows = $conn->fetchArray()) {
+        $itens[] = array(
+            "numUnid2" => $rows['NUM_UNID2'],
+            "numUnid" => $rows['NUM_UNID']
+        );
+    }
+
+    // Função de comparação para ordenar por 'numUnid2'
+    function compare($a, $b)
+    {
+        return strcmp($a['numUnid2'], $b['numUnid2']);
+    }
+
+    // Ordena o array utilizando a função de comparação
+    usort($itens, 'compare');
+
+    echo json_encode($itens);
 }

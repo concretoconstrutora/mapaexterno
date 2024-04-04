@@ -1,0 +1,155 @@
+.input-field input:focus+label {
+    color: green !important;
+}
+
+ul.dropdown-content.select-dropdown li span {
+    color: black;
+}
+
+.row .input-field input:focus {
+    border-bottom: 1px solid green !important;
+    box-shadow: 0 1px 0 0 green !important
+}
+
+.card-image {
+    background-color: #0f433d !important;
+}
+
+.card-title {
+    color: #e8f0eb !important;
+}
+
+.btn:focus,
+.btn-large:focus,
+.btn-small:focus {
+    background-color: #1b2f22;
+}
+
+button {
+    padding: 20px 20px 20px 20px;
+    background-color: #2e7947;
+    color: #fff;
+    border: none;
+    border-radius: 0px;
+    margin: 10px 10px 10px 10px;
+}
+
+@media (max-width: 600px) {
+    table {
+        width: 100%;
+    }
+}
+
+.botao-desabilitado {
+    background-color: #792e2e;
+    color: white;
+}
+
+.botao-verde {
+    background-color: #2e7947;
+    color: white;
+}
+
+#acesso-comum-buttons td,
+#box-buttons td {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+
+/* LEGENDA E INFOS */
+
+.card-legenda {
+    background-color: #353537;
+}
+
+.custom-card {
+    height: 150px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    margin-bottom: 10px;
+    color: #FFF
+}
+
+.color-legend {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.legend-item div {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+}
+
+.disponivel {
+    background-color: #386641;
+}
+
+.vendido {
+    background-color: #8b8c89;
+}
+
+.alugado {
+    background-color: #006494;
+}
+
+.reservado {
+    background-color: #dbae4d;
+}
+
+.reservacomercial {
+    background-color: #ac16e9;
+}
+
+.permuta {
+    background-color: hsl(24, 96%, 55%);
+}
+
+.browser-default {
+    width: auto;
+}
+
+
+/* SELECT */
+
+.browser-default {
+    width: auto;
+    color: #fb8500;
+    font-weight: 400;
+}
+
+.browser-default option {
+    color: black;
+}
+
+.browser-default:checked {
+    color: #fb8500;
+}
+
+.material-icons.background-square {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
+    background-color: #a94400;
+    border-radius: 4px;
+    color: #f9f9f9;
+    margin-right: 20px;
+}
+
+.link-style {
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.link-style:hover {
+    background-color: #311502;
+}
