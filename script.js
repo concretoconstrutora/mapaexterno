@@ -1,9 +1,10 @@
 $(document).ready(function() {
     carregarMapa();
-    $('#loading').hide();
 });
 
 function carregarTotalizador(codEmpre, torre) {
+
+    $('#loading').show();
 
     $.ajax({
         url: "./controller/mapaController.php",
@@ -33,15 +34,8 @@ function carregarTotalizador(codEmpre, torre) {
 
 function carregarMapa() {
 
-    $("#loading").show();
-
-    // Obter a URL atual
     const urlParams = new URLSearchParams(window.location.search);
-
-    // Capturar o valor do parâmetro 'codEmpre'
     const codEmpre = urlParams.get('codEmpre');
-
-    // Capturar o valor do parâmetro 'torre'
     const torre = urlParams.get('torre');
 
     carregarTotalizador(codEmpre, torre);
@@ -118,7 +112,8 @@ function carregarMapa() {
 
                 // Inicializar tooltips do Materialize CSS
                 $('.tooltipped').tooltip();
-                $("#loading").hide();
+
+                $('#loading').hide();
             },
             error: function(error) {
                 console.log('Erro ao receber dados: ', error.responseText);
