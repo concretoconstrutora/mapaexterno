@@ -10,7 +10,7 @@ $(document).ready(function() {
 function carregarSelectEmpreendimentos() {
 
     $.ajax({
-        url: 'mapa/controller.php',
+        url: './controller/mapaController.php',
         type: 'GET',
         data: {
             action: 'retornarEmpreendimentos'
@@ -48,7 +48,7 @@ function carregarSelectTorre(codEmpre) {
     $("#loading").show();
 
     $.ajax({
-        url: 'mapa/controller.php',
+        url: './controller/mapaController.php',
         type: 'GET',
         data: {
             action: 'retornarTorres',
@@ -91,7 +91,7 @@ function carregarTotalizador() {
     torre = document.getElementById("selectTorre").value;
 
     $.ajax({
-        url: "./mapa/controller.php",
+        url: "./controller/mapaController.php",
         type: 'GET',
         data: {
             action: 'retornarTotalizador',
@@ -137,7 +137,7 @@ function carregarMapa(codEmpre, torre) {
     if (codEmpre != 0) {
 
         $.ajax({
-            url: "./mapa/controller.php",
+            url: "./controller/mapaController.php",
             type: 'GET',
             data: {
                 action: 'retornarMapa',
