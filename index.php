@@ -51,18 +51,11 @@ $Conn->conectarBanco();
                         </span>
                     </div>
                     <div style="flex: 1;"></div> <!-- Espaço flexível -->
-                    <select class="browser-default" id="selectEmpreendimento">
-                    </select> &nbsp; &nbsp;
-                    <select class="browser-default" id="selectTorre" style="width: auto;">
-                    </select>
-                    <div class="">
-                        &nbsp; &nbsp;
+                    <div>
                         <a href="#" onclick="carregarMapa()" class="material-icons background-square mt-5 link-style">
-                            <i class="material-icons" style=" margin-top: 3px;">search</i>
+                            <i class="material-icons" style=" margin-top: 3px;">paid</i>
                         </a>
                     </div>
-
-
                 </div>
                 <div class="col s2">
                     <div class="card disponivel card-hover custom-card">
@@ -77,60 +70,12 @@ $Conn->conectarBanco();
                     </div>
                 </div>
                 <div class="col s2">
-                    <div class="card reservado card-hover custom-card">
-                        <div class="card-content" style="padding: 10px" ;>
-                            <div class="d-flex no-block align-items-center">
-                                <div>
-                                    <h3 class="white-text m-b-5" id="qtdReservado">--</h3>
-                                    <h6 class="white-text op-5">RESERVADOS</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s2">
                     <div class="card vendido card-hover custom-card">
                         <div class="card-content" style="padding: 10px" ;>
                             <div class="d-flex no-block align-items-center">
                                 <div>
-                                    <h3 class="white-text m-b-5" id="qtdVendido">--</h3>
-                                    <h6 class="white-text op-5">VENDIDOS</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s2">
-                    <div class="card alugado card-hover custom-card">
-                        <div class="card-content" style="padding: 10px" ;>
-                            <div class="d-flex no-block align-items-center">
-                                <div>
-                                    <h3 class="white-text m-b-5" id="qtdAlugado">--</h3>
-                                    <h6 class="white-text op-5">ALUGADOS</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s2">
-                    <div class="card reservacomercial card-hover custom-card">
-                        <div class="card-content" style="padding: 10px" ;>
-                            <div class="d-flex no-block align-items-center">
-                                <div>
-                                    <h3 class="white-text m-b-5" id="qtdComercial">--</h3>
-                                    <h6 class="white-text op-5">RESERVAS COMERCIAIS</h6>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col s2">
-                    <div class="card permuta card-hover custom-card">
-                        <div class="card-content" style="padding: 10px" ;>
-                            <div class="d-flex no-block align-items-center">
-                                <div>
-                                    <h3 class="white-text m-b-5" id="qtdPermuta">--</h3>
-                                    <h6 class="white-text op-5">PERMUTA</h6>
+                                    <h3 class="white-text" id="qtdDisponivel">--</h3>
+                                    <h6 class="white-text op-5 light-blue-text">INDISPONÍVEIS</h6>
                                 </div>
                             </div>
                         </div>
@@ -177,7 +122,7 @@ $Conn->conectarBanco();
     </div>
 
     <!-- RODAPE E CHAMADAS JS -->
-   
+
     <script type="text/javascript" src="./libs/jquery-3.5.1.min.js"></script>
     <script type="text/javascript" src="./libs/materialize.min.js"></script>
 
