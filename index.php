@@ -20,7 +20,7 @@ $Conn->conectarBanco();
     <meta name="keywords" content="appconcreto,intranet concreto,">
 
     <title>CONCRETO</title>
-    <!-- Favicons-->
+    <!-- FAVICON-->
     <link rel="icon" href="./img/favicon.png" sizes="32x32">
 
     <!-- CORE CSS-->
@@ -28,22 +28,15 @@ $Conn->conectarBanco();
     <link href="./libs/style.css" type="text/css" rel="stylesheet">
 
     <!-- INCLUDED PLUGIN CSS ON THIS PAGE -->
-    <link href="../js/novo/vendors/perfect-scrollbar/perfect-scrollbar.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <script src="../js/novo/jquery/jquery-3.5.1.min.js"></script>
-    <script src="../js/novo/jquery.mask.min.js"></script>
+    <script src="./libs/jquery-3.5.1.min.js"></script>
+    <script src="./libs/jquery.mask.min.js"></script>
 
     <!-- CUSTOM-->
-    <link rel="stylesheet" type="text/css" href="./mapa/style.css">
+    <link rel="stylesheet" type="text/css" href="./style.css">
 
 <body style="background-color:#f3f3f3;">
-
-    <!-- MENU SUPERIOR -->
-    <?php include("./mapa/header.php"); ?>
-
-    <!-- MENU LATERAL -->
-    <?php $isSales ? include("../menuSales.php") : include("../menu2.php"); ?>
 
     <!-- CONTEÚDO -->
     <section id="content" style="background-color:#f3f3f3;">
@@ -52,7 +45,7 @@ $Conn->conectarBanco();
 
                 <div class="card-image" style="display: flex; align-items: center; justify-content: space-between; margin: 11px; ">
                     <div style="display: flex; align-items: center;">
-                        <img src="../imagens/icon-predio.png" style="width: 40px;">
+                        <img src="./img/icon-predio.png" style="width: 40px;">
                         <span class="card-title" style="color: black; font-weight: bold; padding: 10px; margin-left: 10px; margin-right: 8px">
                             <h4> MAPA DE DISPONIBILIDADE <h4>
                         </span>
@@ -184,7 +177,14 @@ $Conn->conectarBanco();
     </div>
 
     <!-- RODAPE E CHAMADAS JS -->
-    <?php include("../footer2.php"); ?>
+   
+    <script type="text/javascript" src="./libs/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="./libs/materialize.min.js"></script>
 
-    <!-- CUSTOM JS -->
-    <script src="./script.js"></script>
+
+</body>
+
+</html>
+
+<!-- CUSTOM JS -->
+<script src="./script.js"></script>
