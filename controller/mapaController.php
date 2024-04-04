@@ -1,8 +1,8 @@
 <?php
 
 header('Content-Type: text/html; charset=UTF-8');
-include("./config/conn.php");
-include("./model/mapaModel.php");
+include("../config/conn.php");
+include("../model/mapaModel.php");
 
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
