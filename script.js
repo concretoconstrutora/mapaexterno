@@ -1,11 +1,9 @@
 $(document).ready(function() {
+    carregarMapa();
     $('#loading').hide();
 });
 
-function carregarTotalizador() {
-
-    codEmpre = document.getElementById("selectEmpreendimento").value;
-    torre = document.getElementById("selectTorre").value;
+function carregarTotalizador(codEmpre, torre) {
 
     $.ajax({
         url: "./controller/mapaController.php",
@@ -19,22 +17,13 @@ function carregarTotalizador() {
         success: function(data) {
 
             var elemento = document.getElementById('qtdDisponivel');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('disponível') ? data[0].disponível : 0;
+            elemento.textContent = data[0] && typeof data[0] === 'object' &&
+                data[0].hasOwnProperty('disponivel') ? data[0].disponivel : 0;
 
-            var elemento = document.getElementById('qtdReservado');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('reservado') ? data[0].reservado : 0;
+            var elemento = document.getElementById('qtdIndisponivel');
+            elemento.textContent = data[0] && typeof data[0] === 'object' &&
+                data[0].hasOwnProperty('indisponivel') ? data[0].indisponivel : 0;
 
-            var elemento = document.getElementById('qtdVendido');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('vendido') ? data[0].vendido : 0;
-
-            var elemento = document.getElementById('qtdAlugado');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('alugado') ? data[0].alugado : 0;
-
-            var elemento = document.getElementById('qtdComercial');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('comercial') ? data[0].comercial : 0;
-
-            var elemento = document.getElementById('qtdPermuta');
-            elemento.textContent = data[0] && typeof data[0] === 'object' && data[0].hasOwnProperty('permuta') ? data[0].permuta : 0;
         },
         error: function(error) {
             console.log('Erro ao receber dados: ', error.responseText);
@@ -42,14 +31,20 @@ function carregarTotalizador() {
     });
 }
 
-function carregarMapa(codEmpre, torre) {
+function carregarMapa() {
 
     $("#loading").show();
 
-    codEmpre = document.getElementById("selectEmpreendimento").value;
-    torre = document.getElementById("selectTorre").value;
+    // Obter a URL atual
+    const urlParams = new URLSearchParams(window.location.search);
 
-    carregarTotalizador();
+    // Capturar o valor do parâmetro 'codEmpre'
+    const codEmpre = urlParams.get('codEmpre');
+
+    // Capturar o valor do parâmetro 'torre'
+    const torre = urlParams.get('torre');
+
+    carregarTotalizador(codEmpre, torre);
 
     if (codEmpre != 0) {
 

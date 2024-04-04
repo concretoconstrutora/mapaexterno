@@ -19,7 +19,7 @@ $Conn->conectarBanco();
     <meta name="description" content="Intranet Concreto">
     <meta name="keywords" content="appconcreto,intranet concreto,">
 
-    <title>CONCRETO</title>
+    <title>CONCRETO - MAPA</title>
     <!-- FAVICON-->
     <link rel="icon" href="./img/favicon.png" sizes="32x32">
 
@@ -74,7 +74,7 @@ $Conn->conectarBanco();
                         <div class="card-content" style="padding: 10px" ;>
                             <div class="d-flex no-block align-items-center">
                                 <div>
-                                    <h3 class="white-text" id="qtdDisponivel">--</h3>
+                                    <h3 class="white-text" id="qtdIndisponivel">--</h3>
                                     <h6 class="white-text op-5 light-blue-text">INDISPONÍVEIS</h6>
                                 </div>
                             </div>

@@ -29,21 +29,16 @@ function retornarTotalizador()
     $torre = $_GET['torre'];
 
     $sql = SQLEmpreendSubUnidTOT($empree, $torre);
-
     $conn->executarQuery($sql);
 
     $itens = array();
     while ($rows = $conn->fetchArray()) {
 
         $item = array(
-            "vendido" => $rows['VENDIDO'],
-            "alugado" => $rows['ALUGADO'],
-            "reservado" => $rows['RESERVADO'],
-            "comercial" => $rows['COMERCIAL'],
-            "disponível" => $rows['DISPONIVEL'],
-            "permuta" => $rows['PERMUTA']
+            "disponivel" => $rows['DISPONIVEL'],
+            "indisponivel" => $rows['VENDIDO'] + $rows['ALUGADO'] + $rows['RESERVADO'] + $rows['COMERCIAL'] + $rows['PERMUTA']
         );
-
+    
         // Adicionar o item ao array de itens
         array_push($itens, $item);
     }
