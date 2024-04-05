@@ -1,13 +1,3 @@
-<?php
-
-include("./config/conn.php");
-
-$Conn = new SQLServer();
-$Conn->CRM();
-$Conn->conectar();
-$Conn->conectarBanco();
-
-?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -42,19 +32,20 @@ $Conn->conectarBanco();
     <section id="content" style="background-color:#f3f3f3;">
         <div class="row">
             <div class="col s12 m12 l12">
-
                 <div class="card-image" style="display: flex; align-items: center; justify-content: space-between; margin: 11px; ">
                     <div style="display: flex; align-items: center;">
                         <img src="./img/icon-predio.png" style="width: 40px;">
                         <span class="card-title" style="color: black; font-weight: bold; padding: 10px; margin-left: 10px; margin-right: 8px">
-                            <h4> MAPA DE DISPONIBILIDADE <h4>
+                            <!-- Utiliza classes de responsividade do Materialize para alterar o elemento -->
+                            <h4 class="hide-on-small-only">MAPA DE DISPONIBILIDADE</h4>
+                            <p class="hide-on-med-and-up">MAPA DE DISPONIBILIDADE</p>
                         </span>
                     </div>
                     <div style="flex: 1;"></div> <!-- Espaço flexível -->
                     <select class="browser-default" id="selectTorre" style="width: auto; margin-right:10px">
                     </select>
                 </div>
-                <div class="col s2">
+                <div class="col s12 m12 l2">
                     <div class="card disponivel card-hover custom-card">
                         <div class="card-content" style="padding: 10px" ;>
                             <div class="d-flex no-block align-items-center">
@@ -66,7 +57,7 @@ $Conn->conectarBanco();
                         </div>
                     </div>
                 </div>
-                <div class="col s2">
+                <div class="col s12 m12 l2">
                     <div class="card vendido card-hover custom-card">
                         <div class="card-content" style="padding: 10px" ;>
                             <div class="d-flex no-block align-items-center">
@@ -84,7 +75,7 @@ $Conn->conectarBanco();
                 <!-- MAPA -->
                 <!-- ============================================================== -->
                 <div class="row">
-                    <div class="col s12">
+                    <div class="col s12 m12 l12">
                         <div class="card" style="background-color: #e5e5e5;">
                             <div class="card-content">
                                 <table id="tabela-disponibilidade"></table>
