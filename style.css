@@ -120,7 +120,7 @@ button {
 
 .browser-default {
     width: auto;
-    color: #fb8500;
+    color: #ffffff;
     font-weight: 400;
 }
 
@@ -129,7 +129,7 @@ button {
 }
 
 .browser-default:checked {
-    color: #fb8500;
+    color: #ffffff;
 }
 
 .material-icons.background-square {

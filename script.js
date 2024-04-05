@@ -1,13 +1,12 @@
 $(document).ready(function() {
     carregarSelectTorre();
+    $("#loading").hide();
 });
 
 function carregarSelectTorre() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const codEmpre = urlParams.get('codEmpre');
-
-    $("#loading").show();
 
     $.ajax({
         url: './controller/mapaController.php',
@@ -24,7 +23,18 @@ function carregarSelectTorre() {
             var defaultOption = $("<option>").attr("value", "0").text("ESCOLHA A TORRE");
             select.append(defaultOption);
 
-            $.each(data, function(index, item) {
+            // Verifica se há itens em 'data' antes de adicionar a primeira opção
+            if (data.length > 0) {
+                var firstItem = data[0];
+                var defaultOption = $("<option>").attr("value", firstItem.numUnid).text(firstItem.numUnid2);
+                defaultOption.prop('selected', true); // Define como selecionado
+                select.append(defaultOption);
+                carregarMapa(); // Carrega o mapa quando a primeira opção é definida
+                $("#loading").show();
+            }
+
+            // Adiciona as demais opções a partir do segundo item
+            $.each(data.slice(1), function(index, item) {
                 var newOption = $("<option>").attr("value", item.numUnid).text(item.numUnid2);
                 select.append(newOption);
             });
@@ -35,13 +45,11 @@ function carregarSelectTorre() {
 
                 var tabela = $('#tabela-disponibilidade');
                 tabela.empty();
+
+                carregarMapa();
             });
-
-            $("#loading").hide();
-
         },
         error: function(error) {
-            $("#loading").hide();
             console.log('Erro ao carregar as opções: ', error.responseText);
 
         }
@@ -49,8 +57,6 @@ function carregarSelectTorre() {
 }
 
 function carregarTotalizador(codEmpre, torre) {
-
-    $('#loading').show();
 
     $.ajax({
         url: "./controller/mapaController.php",
@@ -80,9 +86,11 @@ function carregarTotalizador(codEmpre, torre) {
 
 function carregarMapa() {
 
+    $("#loading").show();
+
     const urlParams = new URLSearchParams(window.location.search);
     const codEmpre = urlParams.get('codEmpre');
-    const torre = urlParams.get('torre');
+    torre = document.getElementById("selectTorre").value;
 
     carregarTotalizador(codEmpre, torre);
 
@@ -158,12 +166,10 @@ function carregarMapa() {
 
                 // Inicializar tooltips do Materialize CSS
                 $('.tooltipped').tooltip();
-
-                $('#loading').hide();
+                $("#loading").hide();
             },
             error: function(error) {
                 console.log('Erro ao receber dados: ', error.responseText);
-                $('#loading').hide();
             }
         });
     } else {
