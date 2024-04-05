@@ -51,9 +51,12 @@ $Conn->conectarBanco();
                         </span>
                     </div>
                     <div style="flex: 1;"></div> <!-- Espaço flexível -->
-                    <div>
+                    <select class="browser-default" id="selectTorre" style="width: auto;">
+                    </select>
+                    <div class="">
+                        &nbsp; &nbsp;
                         <a href="#" onclick="carregarMapa()" class="material-icons background-square mt-5 link-style">
-                            <i class="material-icons" style=" margin-top: 3px;">paid</i>
+                            <i class="material-icons" style=" margin-top: 3px;">search</i>
                         </a>
                     </div>
                 </div>

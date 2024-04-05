@@ -1,6 +1,52 @@
 $(document).ready(function() {
-    carregarMapa();
+    carregarSelectTorre();
 });
+
+function carregarSelectTorre() {
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const codEmpre = urlParams.get('codEmpre');
+
+    $("#loading").show();
+
+    $.ajax({
+        url: './controller/mapaController.php',
+        type: 'GET',
+        data: {
+            action: 'retornarTorres',
+            codEmpree: codEmpre
+        },
+        dataType: 'json',
+        success: function(data) {
+            var select = $('#selectTorre');
+            select.empty();
+
+            var defaultOption = $("<option>").attr("value", "0").text("ESCOLHA A TORRE");
+            select.append(defaultOption);
+
+            $.each(data, function(index, item) {
+                var newOption = $("<option>").attr("value", item.numUnid).text(item.numUnid2);
+                select.append(newOption);
+            });
+
+            // Ao escolher uma opção
+            select.on('change', function() {
+                var torre = $(this).val();
+
+                var tabela = $('#tabela-disponibilidade');
+                tabela.empty();
+            });
+
+            $("#loading").hide();
+
+        },
+        error: function(error) {
+            $("#loading").hide();
+            console.log('Erro ao carregar as opções: ', error.responseText);
+
+        }
+    });
+}
 
 function carregarTotalizador(codEmpre, torre) {
 

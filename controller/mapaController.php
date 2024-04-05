@@ -14,9 +14,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             case "retornarTotalizador":
                 retornarTotalizador();
                 break;
+            case "retornarTorres":
+                retornarTorres();
+                break;
         }
     }
 }
+
 function retornarTotalizador()
 {
 
@@ -38,7 +42,7 @@ function retornarTotalizador()
             "disponivel" => $rows['DISPONIVEL'],
             "indisponivel" => $rows['VENDIDO'] + $rows['ALUGADO'] + $rows['RESERVADO'] + $rows['COMERCIAL'] + $rows['PERMUTA']
         );
-    
+
         // Adicionar o item ao array de itens
         array_push($itens, $item);
     }
@@ -76,17 +80,48 @@ function retornarMapa()
         $sql2 = SQLEmpreendSubUnid($empree, $numUnid, $andar);
         $conn->executarQuery2($sql2);
 
-        while ($rowsUnidade = $conn->fetchArray2()) {          
+        while ($rowsUnidade = $conn->fetchArray2()) {
             $itens[] = array(
                 "andarUnidade" =>  $andar . '-' .
-                                   $rowsUnidade['NUM_SUB_UNID'] . '-' . 
-                                   $rowsUnidade['COR'] . '-' . 
-                                   $rowsUnidade['VENDA'] . '-' .
-                                   $rowsUnidade['DATAVENDA'] . '-' .
-                                   $rowsUnidade['STATUSVENDA'] . '-' .
-                                   $rowsUnidade['CLIENTE']
+                    $rowsUnidade['NUM_SUB_UNID'] . '-' .
+                    $rowsUnidade['COR'] . '-' .
+                    $rowsUnidade['VENDA'] . '-' .
+                    $rowsUnidade['DATAVENDA'] . '-' .
+                    $rowsUnidade['STATUSVENDA'] . '-' .
+                    $rowsUnidade['CLIENTE']
             );
         }
     }
+    echo json_encode($itens);
+}
+
+function retornarTorres()
+{
+    $EMPREE = $_GET['codEmpree'];
+
+    $conn = new SQLServer();
+    $conn->CRM();
+    $conn->conectar();
+    $conn->conectarBanco();
+
+    $conn->executarQuery(SQLEmpreendUNID($EMPREE));
+
+    $itens = array();
+    while ($rows = $conn->fetchArray()) {
+        $itens[] = array(
+            "numUnid2" => $rows['NUM_UNID2'],
+            "numUnid" => $rows['NUM_UNID']
+        );
+    }
+
+    // Função de comparação para ordenar por 'numUnid2'
+    function compare($a, $b)
+    {
+        return strcmp($a['numUnid2'], $b['numUnid2']);
+    }
+
+    // Ordena o array utilizando a função de comparação
+    usort($itens, 'compare');
+
     echo json_encode($itens);
 }
