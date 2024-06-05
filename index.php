@@ -78,7 +78,9 @@
                     <div class="col s12 m12 l12">
                         <div class="card" style="background-color: #e5e5e5;">
                             <div class="card-content">
-                                <table id="tabela-disponibilidade"></table>
+                                <div style="overflow-x:auto;">
+                                    <table id="tabela-disponibilidade"></table>
+                                </div>
                             </div>
                         </div>
                     </div>

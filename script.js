@@ -1,12 +1,10 @@
-$(document).ready(function() {
-    carregarSelectTorre();
-    $("#loading").hide();
-});
-
 function carregarSelectTorre() {
 
     const urlParams = new URLSearchParams(window.location.search);
     const codEmpre = urlParams.get('codEmpre');
+
+    console.log(urlParams);
+
 
     $.ajax({
         url: './controller/mapaController.php',
@@ -176,3 +174,8 @@ function carregarMapa() {
         Materialize.toast('Escolha um empreendimento!', 2000, 'red white-text top right');
     }
 }
+
+$(document).ready(function() {
+    carregarSelectTorre();
+    $("#loading").hide();
+});
